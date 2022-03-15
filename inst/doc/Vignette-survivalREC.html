@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<meta name="author" content="Gustavo Soutinho and Luis Meira-Machado" />
+
+<meta name="date" content="2022-03-14" />
+
+<title>survivalREC: Nonparametric Estimation of the Distribution of Gap Times for Recurrent Events</title>
+
+<script>// Hide empty <a> tag within highlighted CodeBlock for screen reader accessibility (see https://github.com/jgm/pandoc/issues/6352#issuecomment-626106786) -->
+// v0.0.1
+// Written by JooYoung Seo (jooyoung@psu.edu) and Atsushi Yasumoto on June 1st, 2020.
+
+document.addEventListener('DOMContentLoaded', function() {
+  const codeList = document.getElementsByClassName("sourceCode");
+  for (var i = 0; i < codeList.length; i++) {
+    var linkList = codeList[i].getElementsByTagName('a');
+    for (var j = 0; j < linkList.length; j++) {
+      if (linkList[j].innerHTML === "") {
+        linkList[j].setAttribute('aria-hidden', 'true');
+      }
+    }
+  }
+});
+</script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
+<style type="text/css" data-origin="pandoc">
+code.sourceCode > span { display: inline-block; line-height: 1.25; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">survivalREC: Nonparametric Estimation of the Distribution of Gap Times for Recurrent Events</h1>
+<h4 class="author">Gustavo Soutinho and Luis Meira-Machado</h4>
+<h4 class="date">2022-03-14</h4>
+
+
+
+<p>The purpose of the present vignette is to demonstrate the capacities of the R package <em>survivalREC</em>, as a tool to get nonparametric estimation of the distribution of gap times for recurrent events. The methods implemented in the package are applied to the study of (multiple) recurrence times in patients with bladder tumors.</p>
+<div id="recurrent-events" class="section level2">
+<h2>Recurrent events</h2>
+<p>In many longitudinal studies, subjects can experience recurrent events (Cook 2007). This type of data has been frequently observed in medical research, engineering, economy and sociology. In medical research, the recurrent events could be multiple occurrences of hospitalization from a group of patients, multiple recurrence episodes in cancer studies, recurrent upper respiratory and ear infections, repeated heart attacks or multiple relapses from remission for leukemia patients. The analysis of such data can be focused on time-between-events (gap times) or time-to-event models. In time-to-event models, the events of concern usually represent different states in the disease process (e.g. alive and disease-free, alive with disease and dead) and they are modeled through their intensity functions (Andersen et al 1993, Meira- Machado et al 2009, Meira-Machado and Sestelo, 2019). In this vignette we consider that the events are of the same nature and focus on time-between-events.</p>
+</div>
+<div id="estimators" class="section level2">
+<h2>Estimators</h2>
+<p>Four different approaches for estimating the bivariate distribution function of <span class="math inline">\((Y_1,Y_2)\)</span>, <span class="math inline">\(F_{12}(y_1,y_2)=P(Y_1\leq y_1,Y_2\leq y_2)\)</span> are implemented in the <strong>survivalREC</strong> package. The generalization of these methods to more than two gap times is also considered.</p>
+<p>The package implements the bivariate estimators proposed in Lin, Sun and Ying (1999) and de Uña-Álvarez and Meira-Machado (2008). In both estimators right censoring is handled by appropriate reweighting of the chosen summands and the differences between the two estimators are somewhat subtle in this regard. The second estimator (labeled as <em>KMW</em>) only put mass on observations that are completely uncensored (i.e., fully observed till the second event) whereas the first estimator (labeled as <em>LIN</em>) jumps on observations that were uncensored till a given time. In practice this means that Lin’s estimator will show estimated curves with more jump points. The estimates produced via the second estimator produce a valid bivariate distribution since it does guarantee that the bivariate distribution function is monotone. In contrast, the specific reweighting of the data which is used in Lin’s estimator do not ensure this property. Their estimators do not attach positive mass to each pair of recorded gap times, which may lead to problems of interpretation.</p>
+<p>A simple estimator for the bivariate distribution function of <span class="math inline">\((Y_{1},Y_2)\)</span> based on subsampling. The estimator (labeled as <em>LDM</em>) considers the relation, <span class="math inline">\(P(Y_{1}\leq y_1, Y_{2}\leq y_2) = P(Y_{2}\leq y_2\vert Y_{1}\leq y_1)P(Y_{1}\leq y_1)\)</span>, where the second term in the right-hand side of the equation can be estimated using the Kaplan-Meier product-limit estimator of the distribution function of the first event time. The first term can be estimated using a subsampling approach.</p>
+<p>Any of the previous estimators proposed above (<em>LIN</em>, <em>KMW</em> and <em>LDM</em>) may reveal some problems in the right tail where uncensored observations are scarce. Below we propose an estimator that may deal more efficiently at those situations. The proposed estimator is constructed using the cumulative hazard of the total time given a first time but where each observation has been weighted using the information of the first duration. This estimator (<em>WCH</em> - weighted cumulative hazard) follow the ideas by Wang and Wells (1998) in which a product-limit estimator for the second gap time is used.</p>
+</div>
+<div id="application-to-bladder-cancer-study-data" class="section level2">
+<h2>Application to Bladder Cancer Study Data</h2>
+<p>We will use data on the 85 subjects with nonzero follow-up who were assigned to either thiotepa or placebo, with respective sizes of 47 and 38. Among the 85 patients, 47 relapsed at least once, among these, 29 had a second recurrence, 22 had a third recurrence and 14 had four or more recurrences (16.5%). Thus, in our study only the first three recurrence times <span class="math inline">\(T_1\)</span>, <span class="math inline">\(T_2\)</span> and <span class="math inline">\(T_3\)</span> (or the corresponding gap times <span class="math inline">\(Y_1\)</span>, <span class="math inline">\(Y_2\)</span> and <span class="math inline">\(Y_3\)</span>) are considered. Data sets considering two, three and four recurrences are available in the <strong>survivalREC</strong> package. To illustrate our methods we will use data with only the first three recurrences for any patient. Bellow, is an excerpt of the data.frame with one row per individual.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">library</span>(survivalREC)</span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="kw">data</span>(<span class="st">&quot;bladder4state&quot;</span>)</span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="kw">head</span>(bladder4state)</span>
+<span id="cb1-4"><a href="#cb1-4"></a><span class="co">#&gt;   id y1 d1 y2 d2 y3 d3 rx size</span></span>
+<span id="cb1-5"><a href="#cb1-5"></a><span class="co">#&gt; 1  1  1  0  0  0  0  0  1    3</span></span>
+<span id="cb1-6"><a href="#cb1-6"></a><span class="co">#&gt; 2  2  4  0  0  0  0  0  1    1</span></span>
+<span id="cb1-7"><a href="#cb1-7"></a><span class="co">#&gt; 3  3  7  0  0  0  0  0  1    1</span></span>
+<span id="cb1-8"><a href="#cb1-8"></a><span class="co">#&gt; 4  4 10  0  0  0  0  0  1    1</span></span>
+<span id="cb1-9"><a href="#cb1-9"></a><span class="co">#&gt; 5  5  6  1  4  0  0  0  1    1</span></span>
+<span id="cb1-10"><a href="#cb1-10"></a><span class="co">#&gt; 6  6 14  0  0  0  0  0  1    1</span></span>
+<span id="cb1-11"><a href="#cb1-11"></a><span class="kw">dim</span>(bladder4state)</span>
+<span id="cb1-12"><a href="#cb1-12"></a><span class="co">#&gt; [1] 85  9</span></span></code></pre></div>
+<p>The movement among the recurrent events is given by the variables <span class="math inline">\(y_i\)</span> and <span class="math inline">\(d_i\)</span>, with <span class="math inline">\(i=\lbrace1,\cdots, 4\rbrace\)</span>, which represent, respectively, the four gap times and their corresponding censoring indicators (1 for an event and 0 for censoring). The other three variables are the patient id (<em>id</em>), the type of treatment (<em>rx</em>, 1 = <em>placebo</em> and 2 = <em>thiotepa</em>), and the size (<em>cm</em>) of the largest initial tumour (<em>size</em>).</p>
+<p>In what follows, we introduce some examples of how to implement the estimation of the bivariate and distribution functions with three gap times using the <strong>survivalREC</strong> package. First, we need to transform the original data set into a ´multidf´ format class. This can be done using the <em>multidf</em> function that has as arguments <em>time1</em>, <em>time</em>, <em>event1</em> and <em>status</em>. These arguments correspond to the soujorn time in the initial state and the global time, as well as the censoring indicators variables for the first transition and the ultimate state. In the following input codes, covariate <em>size</em> was also included.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>b3state&lt;-<span class="kw">multidf</span>(<span class="dt">gap1=</span>bladder4state<span class="op">$</span>y1, <span class="dt">event1=</span>bladder4state<span class="op">$</span>d1, </span>
+<span id="cb2-2"><a href="#cb2-2"></a>                 <span class="dt">gap2=</span>bladder4state<span class="op">$</span>y2,<span class="dt">status=</span>bladder4state<span class="op">$</span>d2, </span>
+<span id="cb2-3"><a href="#cb2-3"></a>                 <span class="dt">size=</span>bladder4state<span class="op">$</span>size)       </span>
+<span id="cb2-4"><a href="#cb2-4"></a></span>
+<span id="cb2-5"><a href="#cb2-5"></a><span class="kw">class</span>(b3state)</span>
+<span id="cb2-6"><a href="#cb2-6"></a><span class="co">#&gt; [1] &quot;multidf&quot;</span></span>
+<span id="cb2-7"><a href="#cb2-7"></a></span>
+<span id="cb2-8"><a href="#cb2-8"></a>b3state[[<span class="dv">1</span>]][<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>,]</span>
+<span id="cb2-9"><a href="#cb2-9"></a><span class="co">#&gt;    time1 time event1 status size</span></span>
+<span id="cb2-10"><a href="#cb2-10"></a><span class="co">#&gt; 1      1    1      0      0    3</span></span>
+<span id="cb2-11"><a href="#cb2-11"></a><span class="co">#&gt; 2      4    4      0      0    1</span></span>
+<span id="cb2-12"><a href="#cb2-12"></a><span class="co">#&gt; 3      7    7      0      0    1</span></span>
+<span id="cb2-13"><a href="#cb2-13"></a><span class="co">#&gt; 4     10   10      0      0    1</span></span>
+<span id="cb2-14"><a href="#cb2-14"></a><span class="co">#&gt; 5      6   10      1      0    1</span></span>
+<span id="cb2-15"><a href="#cb2-15"></a><span class="co">#&gt; 6     14   14      0      0    1</span></span>
+<span id="cb2-16"><a href="#cb2-16"></a><span class="co">#&gt; 7     18   18      0      0    1</span></span>
+<span id="cb2-17"><a href="#cb2-17"></a><span class="co">#&gt; 8      5   18      1      0    3</span></span>
+<span id="cb2-18"><a href="#cb2-18"></a><span class="co">#&gt; 9     12   16      1      1    1</span></span>
+<span id="cb2-19"><a href="#cb2-19"></a><span class="co">#&gt; 10    23   23      0      0    3</span></span></code></pre></div>
+<p>To obtain the nonparamentric estimates for bivariate distribution, we have the <em>KMWdf</em>, <em>LDMdf</em>, <em>LINdf</em> and <em>WCHdf</em> functions. As an example, suppose we are interested in obtaining the estimates for two gap times, <span class="math inline">\(x=13\)</span> and <span class="math inline">\(y=20\)</span> for methods <em>KMW</em>, <em>LDM</em>, <em>LIN</em> and <em>WCH</em>. The input codes for this case are the following</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="kw">KMWdf</span>(b3state,<span class="dt">x=</span><span class="dv">13</span>,<span class="dt">y=</span><span class="dv">20</span>)</span>
+<span id="cb3-2"><a href="#cb3-2"></a><span class="co">#&gt; [1] 0.2878889</span></span>
+<span id="cb3-3"><a href="#cb3-3"></a></span>
+<span id="cb3-4"><a href="#cb3-4"></a><span class="kw">LDMdf</span>(b3state,<span class="dt">x=</span><span class="dv">13</span>,<span class="dt">y=</span><span class="dv">20</span>)</span>
+<span id="cb3-5"><a href="#cb3-5"></a><span class="co">#&gt; [1] 0.2831524</span></span>
+<span id="cb3-6"><a href="#cb3-6"></a></span>
+<span id="cb3-7"><a href="#cb3-7"></a><span class="kw">LINdf</span>(b3state,<span class="dt">x=</span><span class="dv">13</span>,<span class="dt">y=</span><span class="dv">20</span>)</span>
+<span id="cb3-8"><a href="#cb3-8"></a><span class="co">#&gt; [1] 0.2881169</span></span>
+<span id="cb3-9"><a href="#cb3-9"></a></span>
+<span id="cb3-10"><a href="#cb3-10"></a><span class="kw">WCHdf</span>(b3state,<span class="dt">x=</span><span class="dv">13</span>,<span class="dt">y=</span><span class="dv">20</span>)</span>
+<span id="cb3-11"><a href="#cb3-11"></a><span class="co">#&gt; [1] 0.2873464</span></span></code></pre></div>
+<p>It is also possible to show the estimated curves of the bivariate distribution function given a specific value for the first gap time. This can be done through the <em>plot</em> function for <em>multidf</em> objects.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="kw">plot</span>(<span class="dt">x=</span>b3state, <span class="dt">t1=</span><span class="dv">3</span>, <span class="dt">method=</span><span class="st">&quot;KMW&quot;</span>, <span class="dt">type =</span> <span class="st">&quot;s&quot;</span>, </span>
+<span id="cb4-2"><a href="#cb4-2"></a>     <span class="dt">ylab=</span><span class="st">&#39;Prob.&#39;</span>, <span class="dt">ylim=</span><span class="kw">c</span>(<span class="dv">0</span>,.<span class="dv">25</span>), </span>
+<span id="cb4-3"><a href="#cb4-3"></a>     <span class="dt">xlab=</span><span class="st">&#39;Time to second recurrence&#39;</span>)</span>
+<span id="cb4-4"><a href="#cb4-4"></a></span>
+<span id="cb4-5"><a href="#cb4-5"></a><span class="kw">legend</span>(<span class="dv">45</span>,<span class="fl">0.03</span> , <span class="dt">legend=</span><span class="kw">c</span>(<span class="st">&quot;KMW&quot;</span>), <span class="dt">col=</span><span class="kw">c</span>(<span class="st">&quot;Black&quot;</span>), <span class="dt">lty=</span><span class="dv">1</span>,</span>
+<span id="cb4-6"><a href="#cb4-6"></a>         <span class="dt">cex=</span><span class="dv">1</span>)</span></code></pre></div>
+<p><img src="data:image/png;base64,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YpSJgfqToMtehp92vzYINBWTP5PkNp4BTjQRKEYhUEgzClR9hmUCTYVNoPIzLBNoKkwC1Z8flEBTYTJxg/4MywSaCpNXktiCIhSblzrlZ1gm0FQYvRavPsMygaaCN4tAGoFCGoFCGoFCmkmgI86WEihGsdmCHvefvRhKoBjF6Cm+u9JCoOGCI9BUWO2DVu9/LkTlQ2oEmgoOkiCNQCGNQCHNOtCS00xYgi0opBEopBEopJmdqOdTnQjB6h31fKoTQfCZJEgzejeT6Kc6VV5pxWh5bUHpMjl5faqTQJOT16c6CTQ5eZ0HJdDkECikESikESikESikESikESikESikESikESikESikESikESikESikESikESikESikESikESikESikESikESikESikESikESikESikESikGU2/6KYMq0xnWN7MsvReEZtdoM3Ei4OZQucPZzMAkmAWaJum2fygBJoHs0APD02gZjMsE2ge2IJCmlGg7oBke+oOlxYOZzMAkmB1mqlu9O75+gzgBIpxkj0PSqB5IFBIMwrU/lKIBJoHm0AjXAqRQPNgEmiMC3kRaB6MTjPZXwqRQPPAFhTSrPZBr1wKMdz7igg0D0ZH8faXQiTQPHAeFNIIFNKsAy05iscSbEEhjUAhjUAhjTeLQBpvFoE0XuqENN4sAmlsQSEt8ptF5g1nMgCSwJtFIE37PCjzgGVPPNCwd4r0ECikESikESikESikESikESikESguzLs4xQxjl2f0gs9c4UXDEWh0sR5yAsUsBDplOAKNjkCnDEeg0RHolOEINDoCnTIcgUZHoFOGI9DoCHTKcAQaHYFOGY5AoyPQKcMRaHQEOmU4Ao2OQKcMR6DREeiU4Qg0OgKdMhyBRrfgIS/8h8yrzfa4b+dDqDb3L/7Lfrqu43478X4IFBcWB1ptntzkhj7Wov7bT7Jd/MN95Xx5dgLFLEsDre6e3Ybyz7/Uf51e//r3+5fDw1P9r1/+/VP9lYP7Y9L9ECguLAy06dM9kxduU1nd/3b/0mw1q/v/7Z+GlywgUMyyLFDfpwu0cpvT4tFFW9T7neW2+avodkFvHWigGZYJNLo3D/mUT20U9//d9IEevn6vn9efm63q/cux3ny2f71/P2OXJ8ANnaUzLE/94AqCWbIF3dz9Z99skupA2yRdoPWOZ52q++u8C3rbQBfPD0qY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" /><!-- --></p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a></span>
+<span id="cb5-2"><a href="#cb5-2"></a><span class="kw">plot</span>(<span class="dt">x=</span>b3state, <span class="dt">t1=</span><span class="dv">3</span>, <span class="dt">method=</span><span class="st">&quot;LANDMARK&quot;</span>, <span class="dt">type =</span> <span class="st">&quot;s&quot;</span>,</span>
+<span id="cb5-3"><a href="#cb5-3"></a>     <span class="dt">ylab=</span><span class="st">&#39;Prob.&#39;</span>, <span class="dt">ylim=</span><span class="kw">c</span>(<span class="dv">0</span>,.<span class="dv">25</span>), </span>
+<span id="cb5-4"><a href="#cb5-4"></a>     <span class="dt">xlab=</span><span class="st">&#39;Time to second recurrence&#39;</span>)</span>
+<span id="cb5-5"><a href="#cb5-5"></a></span>
+<span id="cb5-6"><a href="#cb5-6"></a><span class="kw">legend</span>(<span class="dv">45</span>,<span class="fl">0.03</span> , <span class="dt">legend=</span><span class="kw">c</span>(<span class="st">&quot;LDM&quot;</span>), <span class="dt">col=</span><span class="kw">c</span>(<span class="st">&quot;Black&quot;</span>), <span class="dt">lty=</span><span class="dv">1</span>,</span>
+<span id="cb5-7"><a href="#cb5-7"></a>       <span class="dt">cex=</span><span class="dv">1</span>)</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a></span>
+<span id="cb6-2"><a href="#cb6-2"></a><span class="kw">plot</span>(<span class="dt">x=</span>b3state, <span class="dt">t1=</span><span class="dv">3</span>, <span class="dt">method=</span><span class="st">&quot;LIN&quot;</span>, <span class="dt">type =</span> <span class="st">&quot;s&quot;</span>, </span>
+<span id="cb6-3"><a href="#cb6-3"></a>     <span class="dt">ylab=</span><span class="st">&#39;Prob.&#39;</span>, <span class="dt">ylim=</span><span class="kw">c</span>(<span class="dv">0</span>,.<span class="dv">25</span>), </span>
+<span id="cb6-4"><a href="#cb6-4"></a>     <span class="dt">xlab=</span><span class="st">&#39;Time to second recurrence&#39;</span>)</span>
+<span id="cb6-5"><a href="#cb6-5"></a></span>
+<span id="cb6-6"><a href="#cb6-6"></a><span class="kw">legend</span>(<span class="dv">45</span>,<span class="fl">0.03</span> , <span class="dt">legend=</span><span class="kw">c</span>(<span class="st">&quot;LIN&quot;</span>), <span class="dt">col=</span><span class="kw">c</span>(<span class="st">&quot;Black&quot;</span>), <span class="dt">lty=</span><span class="dv">1</span>,</span>
+<span id="cb6-7"><a href="#cb6-7"></a>      <span class="dt">cex=</span><span class="dv">1</span>)</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a></span>
+<span id="cb7-2"><a href="#cb7-2"></a><span class="kw">plot</span>(<span class="dt">x=</span>b3state, <span class="dt">t1=</span><span class="dv">3</span>, <span class="dt">method=</span><span class="st">&quot;WCH&quot;</span>, <span class="dt">type =</span> <span class="st">&quot;s&quot;</span>, <span class="dt">ylab=</span><span class="st">&#39;Prob.&#39;</span>,</span>
+<span id="cb7-3"><a href="#cb7-3"></a>     <span class="dt">ylim=</span><span class="kw">c</span>(<span class="dv">0</span>,.<span class="dv">25</span>), </span>
+<span id="cb7-4"><a href="#cb7-4"></a>     <span class="dt">xlab=</span><span class="st">&#39;Time to second recurrence&#39;</span>)</span>
+<span id="cb7-5"><a href="#cb7-5"></a></span>
+<span id="cb7-6"><a href="#cb7-6"></a><span class="kw">legend</span>(<span class="dv">45</span>,<span class="fl">0.03</span> , <span class="dt">legend=</span><span class="kw">c</span>(<span class="st">&quot;WCH&quot;</span>), <span class="dt">col=</span><span class="kw">c</span>(<span class="st">&quot;Black&quot;</span>), <span class="dt">lty=</span><span class="dv">1</span>,</span>
+<span id="cb7-7"><a href="#cb7-7"></a>        <span class="dt">cex=</span><span class="dv">1</span>)</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<div id="nonparametric-estimation-of-the-conditional-bivariate-distribution-function" class="section level3">
+<h3>Nonparametric estimation of the conditional bivariate distribution function</h3>
+<p>The <strong>survivalREC</strong> package also allows for the computation of nonparametric estimators for bivariate distribution functions conditional on a given continuous covariate. As an example, let’s consider we are interested in computing the estimates for the bivariate distribution with the gap times <span class="math inline">\(x=13\)</span> and <span class="math inline">\(y=15\)</span> conditional on a tumour size of 3 <em>cm</em>. In the following input code, we also compare the estimates, taking into account the type of the kernel density bandwidth (using the <em>dpik</em> function of the <em>KernSmooth</em> package (by default) or through a specific value <em>bw</em>=2). Both of them have a gaussian density kernel.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a><span class="kw">library</span>(KernSmooth)</span>
+<span id="cb8-2"><a href="#cb8-2"></a><span class="co">#&gt; KernSmooth 2.23 loaded</span></span>
+<span id="cb8-3"><a href="#cb8-3"></a><span class="co">#&gt; Copyright M. P. Wand 1997-2009</span></span>
+<span id="cb8-4"><a href="#cb8-4"></a><span class="kw">IPCWdf</span>(<span class="dt">object=</span>b3state, <span class="dt">x=</span><span class="dv">13</span>, <span class="dt">y=</span><span class="dv">15</span>, </span>
+<span id="cb8-5"><a href="#cb8-5"></a>       <span class="dt">covariate=</span><span class="st">&quot;size&quot;</span>, <span class="dt">cov.value=</span><span class="dv">3</span>, <span class="dt">window =</span> <span class="st">&quot;gaussian&quot;</span>)</span>
+<span id="cb8-6"><a href="#cb8-6"></a><span class="co">#&gt; [1] 0.6665688</span></span>
+<span id="cb8-7"><a href="#cb8-7"></a></span>
+<span id="cb8-8"><a href="#cb8-8"></a><span class="kw">IPCWdf</span>(<span class="dt">object=</span>b3state, <span class="dt">x=</span><span class="dv">13</span>, <span class="dt">y=</span><span class="dv">15</span>, </span>
+<span id="cb8-9"><a href="#cb8-9"></a>       <span class="dt">covariate=</span><span class="st">&quot;size&quot;</span>, <span class="dt">bw=</span><span class="dv">2</span>, <span class="dt">cov.value=</span><span class="dv">3</span>, </span>
+<span id="cb8-10"><a href="#cb8-10"></a>       <span class="dt">window =</span> <span class="st">&quot;gaussian&quot;</span>)</span>
+<span id="cb8-11"><a href="#cb8-11"></a><span class="co">#&gt; [1] 0.4324027</span></span></code></pre></div>
+</div>
+<div id="extension-to-more-than-two-gap-times" class="section level3">
+<h3>Extension to more than two gap times</h3>
+<p>The procedures to extend the estimation to three gap times distribution functions, for the methods <em>KMW</em>, <em>LDM</em>, <em>LIN</em> and <em>WCH</em>, are quite similar to the bivariate case. Primary, we must create a new object using the <em>multidf</em> function, called for this example <em>b4state</em>. As we can see, the <em>b4state</em> object give us the cumulative gap times <em>time1</em>, <em>time2</em> and <em>time</em>, as well as, the corresponding censoring indicators (<em>event1</em>, <em>event2</em> and <em>status</em>). Finally, to obtain the estimates, we use the <em>KMW3df</em>, <em>LDM3df</em>, <em>LIN3df</em> and <em>WCH3df</em> functions by including a new parameter <span class="math inline">\(z\)</span> to the third gap time.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a>b4state&lt;-<span class="kw">multidf</span>(<span class="dt">gap1=</span>bladder4state<span class="op">$</span>y1, <span class="dt">event1=</span>bladder4state<span class="op">$</span>d1, </span>
+<span id="cb9-2"><a href="#cb9-2"></a>                 <span class="dt">gap2=</span>bladder4state<span class="op">$</span>y2, <span class="dt">event2=</span>bladder4state<span class="op">$</span>d2,</span>
+<span id="cb9-3"><a href="#cb9-3"></a>                 <span class="dt">gap3=</span>bladder4state<span class="op">$</span>y3, <span class="dt">status=</span>bladder4state<span class="op">$</span>d3, </span>
+<span id="cb9-4"><a href="#cb9-4"></a>                 <span class="dt">size=</span>bladder4state<span class="op">$</span>size)   </span>
+<span id="cb9-5"><a href="#cb9-5"></a></span>
+<span id="cb9-6"><a href="#cb9-6"></a>b4state[[<span class="dv">1</span>]][<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>,]</span>
+<span id="cb9-7"><a href="#cb9-7"></a><span class="co">#&gt;    time1 time2 time event1 event2 status size</span></span>
+<span id="cb9-8"><a href="#cb9-8"></a><span class="co">#&gt; 1      1     1    1      0      0      0    3</span></span>
+<span id="cb9-9"><a href="#cb9-9"></a><span class="co">#&gt; 2      4     4    4      0      0      0    1</span></span>
+<span id="cb9-10"><a href="#cb9-10"></a><span class="co">#&gt; 3      7     7    7      0      0      0    1</span></span>
+<span id="cb9-11"><a href="#cb9-11"></a><span class="co">#&gt; 4     10    10   10      0      0      0    1</span></span>
+<span id="cb9-12"><a href="#cb9-12"></a><span class="co">#&gt; 5      6    10   10      1      0      0    1</span></span>
+<span id="cb9-13"><a href="#cb9-13"></a><span class="co">#&gt; 6     14    14   14      0      0      0    1</span></span>
+<span id="cb9-14"><a href="#cb9-14"></a><span class="co">#&gt; 7     18    18   18      0      0      0    1</span></span>
+<span id="cb9-15"><a href="#cb9-15"></a><span class="co">#&gt; 8      5    18   18      1      0      0    3</span></span>
+<span id="cb9-16"><a href="#cb9-16"></a><span class="co">#&gt; 9     12    16   18      1      1      0    1</span></span>
+<span id="cb9-17"><a href="#cb9-17"></a><span class="co">#&gt; 10    23    23   23      0      0      0    3</span></span>
+<span id="cb9-18"><a href="#cb9-18"></a></span>
+<span id="cb9-19"><a href="#cb9-19"></a><span class="kw">KMW3df</span>(b4state,<span class="dt">x=</span><span class="dv">13</span>,<span class="dt">y=</span><span class="dv">15</span>,<span class="dt">z=</span><span class="dv">10</span>)</span>
+<span id="cb9-20"><a href="#cb9-20"></a><span class="co">#&gt; [1] 0.286572</span></span>
+<span id="cb9-21"><a href="#cb9-21"></a></span>
+<span id="cb9-22"><a href="#cb9-22"></a><span class="kw">LDM3df</span>(b4state,<span class="dt">x=</span><span class="dv">13</span>,<span class="dt">y=</span><span class="dv">15</span>,<span class="dt">z=</span><span class="dv">10</span>)</span>
+<span id="cb9-23"><a href="#cb9-23"></a><span class="co">#&gt; [1] 0.2144355</span></span>
+<span id="cb9-24"><a href="#cb9-24"></a></span>
+<span id="cb9-25"><a href="#cb9-25"></a><span class="kw">LIN3df</span>(b4state,<span class="dt">x=</span><span class="dv">13</span>,<span class="dt">y=</span><span class="dv">15</span>,<span class="dt">z=</span><span class="dv">10</span>)</span>
+<span id="cb9-26"><a href="#cb9-26"></a><span class="co">#&gt; [1] 0.2238439</span></span>
+<span id="cb9-27"><a href="#cb9-27"></a></span>
+<span id="cb9-28"><a href="#cb9-28"></a><span class="kw">WCH3df</span>(b4state,<span class="dt">x=</span><span class="dv">13</span>,<span class="dt">y=</span><span class="dv">15</span>,<span class="dt">z=</span><span class="dv">10</span>)</span>
+<span id="cb9-29"><a href="#cb9-29"></a><span class="co">#&gt; [1] 0.2218412</span></span></code></pre></div>
+</div>
+</div>
+<div id="references" class="section level2">
+<h2>References</h2>
+<ul>
+<li><p>Lin, D. Y., Sun, W. and Ying, Z. <em>Nonparametric estimation of the gap time distributions for serial events with censored data</em>, Biometrika, 86, 59-70, 1999.</p></li>
+<li><p>Meira-Machado, L., de Uña-Álvarez, J. and Cadarso-Suárez, C., <em>Nonparametric estimation of transition probabilities in a non-Markov illness-death model</em>, Lifetime Data Analysis, 12, 325-344, 2006.</p></li>
+<li><p>Meira-Machado, L., de Uña-Álvarez, J., Cadarso-Suárez, C. and Andersen, P., <em>Multi-state models for the analysis of time to event data</em>, Statistical Methods in Medical Research,18, 195-222, 2009.</p></li>
+<li><p>Meira-Machado, L. and Sestelo, M., <em>Estimation in the progressive illness-death model: A nonexhaustive review</em>, Biometrical Journal, 61(2), 245-263, 2019.</p></li>
+<li><p>de Uña-Álvarez, J. and Meira-Machado, L., <em>A simple estimator of the bivariate distribution function for censored gap times</em>, Statistics and Probability Letters, 78, 2440-2445, 2008.</p></li>
+<li><p>Wang, M.C. and Wells, M.T., <em>Nonparametric Estimation of successive duration times under dependent censoring</em>, Biometrika, 85, 561-572, 1998.</p></li>
+</ul>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,3 @@
+LIBRARY survivalREC.dll
+EXPORTS
+ R_init_survivalREC
