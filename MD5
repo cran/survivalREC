@@ -1,5 +1,5 @@
-6fd2cd5a18d9671c45c632a6f6190b8b *DESCRIPTION
-ea4538a15c9c486a175841c2bc030af9 *NAMESPACE
+3b361aea37b452c4893d1815c126c6c6 *DESCRIPTION
+00c79009a9a7586e2941442f39698633 *NAMESPACE
 5568604a318546416ff988d53e255419 *R/Beran.R
 674ac6347c0bbff4b70370f14bebb4c2 *R/IPCWdf.R
 f4546292892fe8d52b600302dd632652 *R/KM.R
@@ -13,10 +13,10 @@ aac07d6f4a61d38aab3b5257c883b31a *R/LDMdf.R
 8424f755ad0a147d2c4d35b9387673a8 *R/NWW.R
 a453f673797cbbaff94600eed64c126f *R/WCH3df.R
 de4d9a1c73257eea457afb9b7e356aaa *R/WCHdf.R
-2f6ad03e7b36a6d750e68bf456e80402 *R/multidf.R
-14f9b25a26d894b7c04da5c7d3da7c5b *R/plot.multidf.R
+dfa7d4a46861021f36cb3f565db0428c *R/multidf.R
+267b98327d2982c3b6fe9d378745e8e4 *R/plot.multidf.R
 8023f0f3fb06e5c593aad3601ab609fe *README.md
-9a86af51abdfba5b22b5eb71f2ad212a *build/vignette.rds
+0ca28534625db5046609dc252b9af155 *build/vignette.rds
 fa187b47add0e31a840d3b61c9868aa2 *data/b3.rda
 73ed5e756897444628f8855885d379e1 *data/b3size.rda
 a3a2e003e35acd08439af1fed0eb9eb1 *data/b3state.rda
@@ -29,10 +29,10 @@ c9ed38413eaa6d2f2c67346cd3816ee8 *data/bladder3.rda
 c053a5bf1153aab4d2e044f4ff210eec *data/bladder4state.rda
 dc20909e95c5badb7954dc7326723231 *data/bladder5.rda
 0cd17f102f6d51f5696e70486dc28564 *data/bladder5state.rda
-4280b63364aca74e0aec1b66b9e7824c *inst/NEWS.Rd
+686810c313ab0ea5434d7aefa077386f *inst/NEWS.Rd
 bb6eaf530b393901c38bd7596f301de4 *inst/doc/Vignette-survivalREC.R
 c2bc1244b379315a137bc5cea005d2db *inst/doc/Vignette-survivalREC.Rmd
-ee20ede215f9d08c5629f3bc60fa59ee *inst/doc/Vignette-survivalREC.html
+55751e3e36bf08c01c1f3face3b3f6f6 *inst/doc/Vignette-survivalREC.html
 3bf636f1fd1ee4334d6fcc7c410a91ba *man/Beran.Rd
 bbc550f1b52c10659f71265de5e395b4 *man/IPCWdf.Rd
 6081f99d3cab01c4b875e45ec81522dc *man/KM.Rd
@@ -61,7 +61,7 @@ f3608aec55176a4038874bb2dfeeb365 *man/bladder4.Rd
 95f429b32df78cdd3aa211959a2e9ecc *man/multidf.Rd
 050d71b3bcecab981df69b6d40f70469 *man/plot.multidf.Rd
 d25d5af44b59cd40d3830b54f7a7cf7f *src/Makevars
-cdee06e46f862bbeb15e0a74c5c7d454 *src/survivalBIV.c
+a9e2bc1d869fa422800b6b294015e3db *src/survivalBIV.c
 7cf6f17cd6111346659e4cff7510abec *src/survivalREC-win.def
 02c02f51af8e1decbd727088d4fc1488 *src/survivalREC_init.c
 c2bc1244b379315a137bc5cea005d2db *vignettes/Vignette-survivalREC.Rmd

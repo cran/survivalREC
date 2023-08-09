@@ -53,7 +53,7 @@
 plot.multidf <- function(
   x, t1, method="KMW", type = "s", ...
 ) {
-  if (class(x)!="multidf") stop("The argumment 'x' must be of classe 'multidf'")
+  if (is(x)!="multidf") stop("The argumment 'x' must be of classe 'multidf'")
   ob <- x[[1]]
   time1 <- ob$time1
   time <- ob$time

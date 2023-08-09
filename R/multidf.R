@@ -53,6 +53,7 @@
 #' @importFrom "utils" capture.output
 #' @importFrom "stats" model.matrix model.frame model.response model.offset  
 #' @importFrom "stats" delete.response delete.response
+#' @importFrom "methods" is
 
 #' @export Beran
 #' @export IPCWdf

@@ -2,8 +2,8 @@ Package: survivalREC
 Type: Package
 Title: Nonparametric Estimation of the Distribution of Gap Times for
         Recurrent Events
-Version: 1.0
-Date: 2022-03-09
+Version: 1.1
+Date: 2023-08-09
 Authors@R: c(
 	person(
 		given = "Gustavo",
@@ -51,19 +51,19 @@ Description: Provides estimates for the bivariate and trivariate distribution
              been submitted to be published.  
 License: GPL-3
 Depends: R (>= 3.5.0)
-Imports: survival, KernSmooth, graphics, stats, utils
-RoxygenNote: 7.1.2
+Imports: survival, KernSmooth, graphics, stats, utils, methods
+RoxygenNote: 7.2.1
 Encoding: UTF-8
 LazyLoad: yes
 LazyData: yes
 NeedsCompilation: yes
 Suggests: rmarkdown, knitr
 VignetteBuilder: knitr
-Packaged: 2022-03-14 14:48:11 UTC; asus
+Packaged: 2023-08-09 09:13:50 UTC; asus
 Author: Gustavo Soutinho [aut, cre] (<https://orcid.org/0000-0002-0559-1327>),
   Luis Meira-Machado [aut] (<https://orcid.org/0000-0002-8577-7665>),
   Artur Araujo [ctb] (<https://orcid.org/0000-0003-1419-4208>),
   Ana Moreira [ctb]
 Maintainer: Gustavo Soutinho <gustavosoutinho@sapo.pt>
 Repository: CRAN
-Date/Publication: 2022-03-15 18:50:05 UTC
+Date/Publication: 2023-08-09 10:30:05 UTC
